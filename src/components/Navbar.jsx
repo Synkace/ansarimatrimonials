@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
-import { Moon, User, Shield } from "lucide-react";
+import { Moon, User, Shield, Menu, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
     const { data: session } = useSession();
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-emerald-950/90 backdrop-blur-sm border-b border-gold/20 text-gold shadow-lg">
@@ -15,10 +18,11 @@ export default function Navbar() {
                     Ansari Matrimonials
                 </Link>
 
-                <div className="flex items-center gap-6">
+                {/* Desktop Menu */}
+                <div className="hidden md:flex items-center gap-6">
                     <Link href="/discover" className="hover:text-white transition-colors">Discover</Link>
-                    <Link href="/about" className="hover:text-white transition-colors hidden md:block">About</Link>
-                    <Link href="/stories" className="hover:text-white transition-colors hidden md:block">Stories</Link>
+                    <Link href="/about" className="hover:text-white transition-colors">About</Link>
+                    <Link href="/stories" className="hover:text-white transition-colors">Stories</Link>
 
                     {session?.user?.role === 'admin' && (
                         <Link href="/admin" className="flex items-center gap-1 hover:text-white transition-colors">
@@ -44,7 +48,83 @@ export default function Navbar() {
                         </Link>
                     )}
                 </div>
+
+                {/* Mobile Menu Button */}
+                <button
+                    className="md:hidden p-2 text-gold focus:outline-none"
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </button>
             </div>
+
+            {/* Mobile Menu Overlay */}
+            {isOpen && (
+                <div className="md:hidden absolute top-16 left-0 w-full bg-emerald-950/95 border-b border-gold/20 backdrop-blur-md p-4 flex flex-col gap-4 shadow-xl animate-in slide-in-from-top-2">
+                    <Link
+                        href="/discover"
+                        className="p-2 hover:bg-gold/10 rounded-lg transition-colors"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        Discover
+                    </Link>
+                    <Link
+                        href="/about"
+                        className="p-2 hover:bg-gold/10 rounded-lg transition-colors"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        About
+                    </Link>
+                    <Link
+                        href="/stories"
+                        className="p-2 hover:bg-gold/10 rounded-lg transition-colors"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        Stories
+                    </Link>
+
+                    {session?.user?.role === 'admin' && (
+                        <Link
+                            href="/admin"
+                            className="p-2 hover:bg-gold/10 rounded-lg transition-colors flex items-center gap-2"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            <Shield className="w-4 h-4" /> Admin
+                        </Link>
+                    )}
+
+                    {session ? (
+                        <>
+                            <Link
+                                href="/dashboard"
+                                className="p-2 hover:bg-gold/10 rounded-lg transition-colors font-bold"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                Dashboard
+                            </Link>
+                            <Link
+                                href={`/profile/${session.user.id}`}
+                                className="p-2 hover:bg-gold/10 rounded-lg transition-colors flex items-center gap-2"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <User className="w-4 h-4" /> My Profile
+                            </Link>
+                            <button
+                                onClick={() => { signOut(); setIsOpen(false); }}
+                                className="p-2 text-left hover:bg-red-500/10 text-red-300 rounded-lg transition-colors"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <Link href="/api/auth/signin" onClick={() => setIsOpen(false)}>
+                            <button className="w-full py-3 mt-2 bg-gold text-emerald-950 font-bold rounded-lg hover:bg-white transition-all">
+                                Login
+                            </button>
+                        </Link>
+                    )}
+                </div>
+            )}
         </nav>
     );
 }

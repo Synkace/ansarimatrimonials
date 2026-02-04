@@ -21,7 +21,7 @@ export default function Home() {
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-8">
           <Moon className="w-24 h-24 text-gold mx-auto animate-pulse drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
-          <h1 className="text-5xl md:text-7xl font-serif text-gold leading-tight">
+          <h1 className="text-4xl md:text-7xl font-serif text-gold leading-tight">
             Ansari Matrimonials
           </h1>
           <p className="text-xl md:text-2xl text-emerald-200/90 max-w-2xl mx-auto font-light">
