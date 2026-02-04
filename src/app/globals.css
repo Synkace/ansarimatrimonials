@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-deepEmerald: #064E3B;
+  --color-gold: #D4AF37;
+  
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
+}
+
+@layer utilities {
+  .mihrab-mask {
+    /* Pointed arch */
+    clip-path: polygon(0% 100%, 0% 35%, 50% 0%, 100% 35%, 100% 100%);
+  }
+}
+
+:root {
+  --background: #064E3B;
+  --foreground: #ffffff;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
