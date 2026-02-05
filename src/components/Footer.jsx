@@ -12,7 +12,7 @@ export default function Footer() {
                     <div className="space-y-4">
                         <Link href="/" className="flex items-center gap-2 text-gold font-serif text-2xl font-bold">
                             <Moon className="w-6 h-6 fill-gold" />
-                            Ansar (the helpers) Matrimonials
+                            Ansari Matrimonials
                         </Link>
                         <p className="text-sm leading-relaxed max-w-xs">
                             Halal matchmaking with privacy at its core. Verified profiles, lunar compatibility, and the blessings of tradition.
@@ -61,7 +61,7 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-gold/10 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-center md:text-left gap-4">
-                    <p>&copy; {new Date().getFullYear()} Ansar (the helpers) Matrimonials. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Ansari Matrimonials. All rights reserved.</p>
                     <div className="flex items-center gap-1 justify-center">
                         <span className="text-gold/60">Made with</span>
                         <Heart className="w-3 h-3 text-red-500 fill-red-500" />

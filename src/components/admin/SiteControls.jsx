@@ -5,7 +5,7 @@ import { Save, Loader } from "lucide-react";
 
 export default function SiteControls() {
     const [heroData, setHeroData] = useState({
-        heading: "Ansar (the helpers)",
+        heading: "Find Your Perfect Match in Our Community",
         subheading: "Connecting hearts with faith and tradition. Join thousands of happy couples.",
         ctaText: "Start Your Journey"
     });

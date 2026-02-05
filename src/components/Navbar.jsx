@@ -15,7 +15,7 @@ export default function Navbar() {
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 <Link href="/" className="text-xl font-bold font-serif flex items-center gap-2">
                     <Moon className="w-6 h-6 fill-gold" />
-                    Ansar (the helpers) Matrimonials
+                    Ansari Matrimonials
                 </Link>
 
                 {/* Desktop Menu */}

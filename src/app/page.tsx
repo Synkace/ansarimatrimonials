@@ -12,14 +12,14 @@ async function getHeroContent() {
     await dbConnect();
     const data = await SiteContent.findOne({ section: 'hero' });
     return data?.content || {
-      heading: "Ansar (the helpers) Matrimonials",
+      heading: "Ansari Matrimonials",
       subheading: "Halal matchmaking with privacy at its core. Verified profiles, lunar compatibility, and the blessings of tradition.",
       ctaText: "Browse Profiles"
     };
   } catch (e) {
     console.error("Failed to fetch hero content", e);
     return {
-      heading: "Ansar (the helpers) Matrimonials",
+      heading: "Ansari Matrimonials",
       subheading: "Halal matchmaking with privacy at its core. Verified profiles, lunar compatibility, and the blessings of tradition.",
       ctaText: "Browse Profiles"
     };
@@ -75,7 +75,7 @@ export default async function Home() {
       <section className="py-20 bg-gold text-emerald-950">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-serif font-bold mb-6">Ready to find your soulmate?</h2>
-          <p className="text-xl mb-8 opacity-90">Join thousands of happy couples who trusted Ansar (the helpers).</p>
+          <p className="text-xl mb-8 opacity-90">Join thousands of happy couples who trusted Ansari.</p>
           <Link href="/signup">
             <button className="px-10 py-4 bg-emerald-950 text-gold text-xl font-bold rounded-full hover:bg-emerald-900 transition-all shadow-xl">
               Get Started Today
