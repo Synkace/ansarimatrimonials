@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import ChatList from "@/components/chat/ChatList";
 import ChatWindow from "@/components/chat/ChatWindow";
 
-export default function ChatPage() {
+function ChatContent() {
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     const targetUserId = searchParams.get('userId');
@@ -62,5 +62,13 @@ export default function ChatPage() {
                 />
             </div>
         </div>
+    );
+}
+
+export default function ChatPage() {
+    return (
+        <Suspense fallback={<div className="flex h-screen items-center justify-center text-gold">Loading Chat...</div>}>
+            <ChatContent />
+        </Suspense>
     );
 }
