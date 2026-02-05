@@ -10,6 +10,7 @@ import { Lock, BadgeCheck, Phone, MessageCircle } from "lucide-react";
 export const dynamic = 'force-dynamic';
 
 export default async function ProfilePage({ params }) {
+    const { id } = await params;
     await dbConnect();
     const session = await getServerSession();
     // Should extract user from session properly in real app using authOptions
@@ -20,12 +21,12 @@ export default async function ProfilePage({ params }) {
 
     let targetUser = null;
 
-    if (params.id.startsWith("mock")) {
+    if (id.startsWith("mock")) {
         const { MOCK_USERS } = await import("@/lib/mockData");
-        targetUser = MOCK_USERS.find(u => u._id === params.id);
+        targetUser = MOCK_USERS.find(u => u._id === id);
     } else {
         try {
-            targetUser = await User.findById(params.id);
+            targetUser = await User.findById(id);
         } catch (e) {
             return notFound();
         }
