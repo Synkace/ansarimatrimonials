@@ -15,8 +15,8 @@ export default async function Dashboard() {
         redirect("/login");
     }
 
-    // Force onboarding if not verified/completed
-    if (!session.user.isVerified) {
+    // Force onboarding if profile is not complete
+    if (!session.user.isProfileComplete) {
         redirect("/onboarding");
     }
 

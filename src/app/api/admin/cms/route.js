@@ -2,19 +2,29 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
-import Faq from "@/models/Faq";
-import Blog from "@/models/Blog";
+import Faq from "@/models/Faq"; // Ensure this exists or handle missing
+import Blog from "@/models/Blog"; // Ensure this exists
+import SiteContent from "@/models/SiteContent";
 
 export async function POST(request) {
     // Check Admin Session
     const session = await getServerSession();
-    // if (!session || session.user.role !== 'admin') {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
+    // if (!session || session.user.role !== 'admin') { ... }
 
     try {
-        const { type, action, data, id } = await request.json();
+        const body = await request.json();
+        const { type, action, data, id } = body;
         await dbConnect();
+
+        if (type === 'site-content') {
+            const { section, content } = data;
+            const updated = await SiteContent.findOneAndUpdate(
+                { section },
+                { content },
+                { upsert: true, new: true }
+            );
+            return NextResponse.json({ success: true, data: updated });
+        }
 
         let Model;
         switch (type) {
@@ -44,10 +54,16 @@ export async function POST(request) {
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
+    const section = searchParams.get('section');
 
     await dbConnect();
 
     try {
+        if (type === 'site-content') {
+            const content = await SiteContent.findOne({ section });
+            return NextResponse.json({ content: content?.content || {} });
+        }
+
         let data;
         switch (type) {
             case 'story': data = await Story.find({}).sort({ createdAt: -1 }); break;

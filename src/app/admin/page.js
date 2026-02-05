@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2, FileText, HelpCircle, MessageCircle, UserPlus, CheckCircle } from "lucide-react";
+import { Plus, Trash2, FileText, HelpCircle, MessageCircle, UserPlus, CheckCircle, Image } from "lucide-react";
+import UserTable from "@/components/admin/UserTable";
+import VerificationQueue from "@/components/admin/VerificationQueue";
+import PhotoModeration from "@/components/admin/PhotoModeration";
+import SiteControls from "@/components/admin/SiteControls";
 
 export default function AdminPage() {
     const [activeTab, setActiveTab] = useState("verification");
@@ -14,16 +18,47 @@ export default function AdminPage() {
     const [form, setForm] = useState({ title: "", content: "", category: "General" });
 
     const handleCmsSubmit = async (type) => {
-        // POST to /api/admin/cms
-        // Simplified
-        alert(`Created ${type} (Check Network Tab for API Implementation)`);
-        // In real code: await fetch('/api/admin/cms', { method: 'POST', body: JSON.stringify({ type, action:'create', data: form }) })
+        setLoading(true);
+        try {
+            let payloadData = { ...form };
+            // Map form fields to Model schemas
+            if (type === 'story') {
+                payloadData = { couple: form.title, story: form.content };
+            } else if (type === 'faq') {
+                payloadData = { question: form.title, answer: form.content };
+            }
+
+            const res = await fetch('/api/admin/cms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type, action: 'create', data: payloadData })
+            });
+
+            if (res.ok) {
+                alert(`${type} created successfully!`);
+                setForm({ title: "", content: "", category: "General" }); // Reset form
+                // Trigger refresh if needed
+            } else {
+                alert("Failed to create item.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error submitting form.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const renderContent = () => {
         switch (activeTab) {
+            case 'user':
+                return <UserTable />;
             case 'verification':
-                return <div className="text-emerald-200">Pending Verifications (See Previous Impl)</div>;
+                return <VerificationQueue />;
+            case 'photos':
+                return <PhotoModeration />;
+            case 'site':
+                return <SiteControls />;
             case 'agent':
                 return (
                     <div className="space-y-4">
@@ -73,7 +108,10 @@ export default function AdminPage() {
             <div className="md:w-64 space-y-2">
                 <h1 className="text-xl font-bold text-gold mb-6 px-4">Admin CMS</h1>
                 {[
+                    { id: 'user', label: 'Users', icon: UserPlus },
                     { id: 'verification', label: 'Verifications', icon: CheckCircle },
+                    { id: 'photos', label: 'Photos', icon: Image },
+                    { id: 'site', label: 'Site Controls', icon: FileText },
                     { id: 'agent', label: 'Agents', icon: UserPlus },
                     { id: 'story', label: 'Stories', icon: MessageCircle },
                     { id: 'faq', label: 'FAQs', icon: HelpCircle },

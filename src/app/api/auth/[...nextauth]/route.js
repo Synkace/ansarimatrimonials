@@ -33,7 +33,14 @@ export const authOptions = {
                             email: `${phone}@ansari.com` // Placeholder email to satisfy Schema if needed
                         });
                     }
-                    return { id: user._id.toString(), email: user.email, name: user.name, role: user.role };
+                    return {
+                        id: user._id.toString(),
+                        email: user.email,
+                        name: user.name,
+                        role: user.role,
+                        isVerified: user.isVerified,
+                        isProfileComplete: user.isProfileComplete
+                    };
                 }
 
                 // Simple login logic
@@ -47,7 +54,14 @@ export const authOptions = {
                     throw new Error("Invalid password");
                 }
 
-                return { id: user._id.toString(), email: user.email, name: user.name, role: user.role };
+                return {
+                    id: user._id.toString(),
+                    email: user.email,
+                    name: user.name,
+                    role: user.role,
+                    isVerified: user.isVerified,
+                    isProfileComplete: user.isProfileComplete
+                };
             },
         }),
     ],
@@ -57,6 +71,7 @@ export const authOptions = {
                 token.role = user.role;
                 token.id = user.id;
                 token.isVerified = user.isVerified;
+                token.isProfileComplete = user.isProfileComplete;
             }
             return token;
         },
@@ -65,6 +80,7 @@ export const authOptions = {
                 session.user.role = token.role;
                 session.user.id = token.id;
                 session.user.isVerified = token.isVerified;
+                session.user.isProfileComplete = token.isProfileComplete;
             }
             return session;
         },

@@ -4,7 +4,31 @@ import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { StoriesSection } from '@/components/home/StoriesSection';
 import { FaqSection } from '@/components/home/FaqSection';
 
-export default function Home() {
+import dbConnect from "@/lib/mongodb";
+import SiteContent from "@/models/SiteContent";
+
+async function getHeroContent() {
+  try {
+    await dbConnect();
+    const data = await SiteContent.findOne({ section: 'hero' });
+    return data?.content || {
+      heading: "Ansar (the helpers) Matrimonials",
+      subheading: "Halal matchmaking with privacy at its core. Verified profiles, lunar compatibility, and the blessings of tradition.",
+      ctaText: "Browse Profiles"
+    };
+  } catch (e) {
+    console.error("Failed to fetch hero content", e);
+    return {
+      heading: "Ansar (the helpers) Matrimonials",
+      subheading: "Halal matchmaking with privacy at its core. Verified profiles, lunar compatibility, and the blessings of tradition.",
+      ctaText: "Browse Profiles"
+    };
+  }
+}
+
+export default async function Home() {
+  const hero = await getHeroContent();
+
   return (
     <div className="min-h-screen text-center scroll-mt-20">
       {/* Hero Section */}
@@ -22,16 +46,16 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto space-y-8">
           <Moon className="w-24 h-24 text-gold mx-auto animate-pulse drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
           <h1 className="text-4xl md:text-7xl font-serif text-gold leading-tight">
-            Ansari Matrimonials
+            {hero.heading}
           </h1>
           <p className="text-xl md:text-2xl text-emerald-200/90 max-w-2xl mx-auto font-light">
-            Halal matchmaking with privacy at its core. Verified profiles, lunar compatibility, and the blessings of tradition.
+            {hero.subheading}
           </p>
 
           <div className="flex flex-col md:flex-row gap-6 justify-center pt-8">
             <Link href="/discover">
               <button className="px-8 py-4 bg-gold text-emerald-950 text-xl font-bold rounded-full hover:bg-white transition-all shadow-lg hover:shadow-gold/50 min-w-[200px]">
-                Browse Profiles
+                {hero.ctaText}
               </button>
             </Link>
             <Link href="/signup">
@@ -51,7 +75,7 @@ export default function Home() {
       <section className="py-20 bg-gold text-emerald-950">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-serif font-bold mb-6">Ready to find your soulmate?</h2>
-          <p className="text-xl mb-8 opacity-90">Join thousands of happy couples who trusted Ansari.</p>
+          <p className="text-xl mb-8 opacity-90">Join thousands of happy couples who trusted Ansar (the helpers).</p>
           <Link href="/signup">
             <button className="px-10 py-4 bg-emerald-950 text-gold text-xl font-bold rounded-full hover:bg-emerald-900 transition-all shadow-xl">
               Get Started Today

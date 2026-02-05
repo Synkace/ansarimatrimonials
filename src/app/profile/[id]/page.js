@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { stripSensitiveData } from "@/lib/utils";
 import LunarProgress from "@/components/ui/LunarProgress";
-import { Lock, BadgeCheck, Phone } from "lucide-react";
+import { Lock, BadgeCheck, Phone, MessageCircle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +18,18 @@ export default async function ProfilePage({ params }) {
     // No, we need stripSensitiveData on server.
     // We'll assume session.user exists if logged in.
 
-    const targetUser = await User.findById(params.id);
+    let targetUser = null;
+
+    if (params.id.startsWith("mock")) {
+        const { MOCK_USERS } = await import("@/lib/mockData");
+        targetUser = MOCK_USERS.find(u => u._id === params.id);
+    } else {
+        try {
+            targetUser = await User.findById(params.id);
+        } catch (e) {
+            return notFound();
+        }
+    }
 
     if (!targetUser) return notFound();
 
@@ -112,6 +123,14 @@ export default async function ProfilePage({ params }) {
                             </div>
                         </div>
                     )}
+
+                    {/* Message Button - Always Visible or only if unlocked? Let's make it always visible to encourage contact */}
+                    <div className="mt-6 flex justify-center">
+                        <a href={`/chat?userId=${safeUser._id}`} className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white font-bold rounded-full hover:scale-105 transition-transform shadow-lg border border-emerald-500/50">
+                            <MessageCircle className="w-5 h-5" />
+                            Message {safeUser.name.split(" ")[0]}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

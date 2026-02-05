@@ -9,7 +9,11 @@ const UserSchema = new mongoose.Schema({
     agentId: { type: String }, // ID of the agent managing this user
 
     isVerified: { type: Boolean, default: false },
+    verificationStatus: { type: String, default: 'unverified', enum: ['unverified', 'pending', 'verified', 'rejected'] },
+    isProfileComplete: { type: Boolean, default: false },
     isPremium: { type: Boolean, default: false },
+    accountStatus: { type: String, default: 'active', enum: ['active', 'suspended', 'banned'] },
+
     unlockedProfiles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     managedBy: { type: String, default: 'Self' },
 

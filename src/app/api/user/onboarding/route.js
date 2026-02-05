@@ -21,8 +21,8 @@ export async function POST(req) {
             session.user.id,
             {
                 ...data,
-                isVerified: true, // Mark as verified/completed? Or just set a flag 'isProfileComplete'?
-                // For now, let's just assume simple update.
+                ...data,
+                isProfileComplete: true,
             },
             { new: true }
         );

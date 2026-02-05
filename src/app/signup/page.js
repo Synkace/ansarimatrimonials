@@ -22,7 +22,7 @@ export default function SignupPage() {
             <div className="w-full max-w-md space-y-8 bg-emerald-900/50 p-8 rounded-2xl border border-gold/30 backdrop-blur-md shadow-2xl">
                 <div className="text-center">
                     <Moon className="mx-auto h-12 w-12 text-gold" />
-                    <h2 className="mt-6 text-3xl font-bold font-serif text-gold">Join Ansari</h2>
+                    <h2 className="mt-6 text-3xl font-bold font-serif text-gold">Join Ansar (the helpers)</h2>
                     <p className="mt-2 text-sm text-emerald-200">Begin your journey to a blessed union</p>
                 </div>
 
@@ -50,8 +50,8 @@ export default function SignupPage() {
                             value={formData.gender}
                             onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                         >
-                            <option value="male">Brother looking for Sister</option>
-                            <option value="female">Sister looking for Brother</option>
+                            <option value="male">Groom seeking Bride</option>
+                            <option value="female">Bride seeking Groom</option>
                         </select>
                     </div>
 

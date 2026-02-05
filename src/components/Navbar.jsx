@@ -15,7 +15,7 @@ export default function Navbar() {
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 <Link href="/" className="text-xl font-bold font-serif flex items-center gap-2">
                     <Moon className="w-6 h-6 fill-gold" />
-                    Ansari Matrimonials
+                    Ansar (the helpers) Matrimonials
                 </Link>
 
                 {/* Desktop Menu */}
@@ -38,7 +38,7 @@ export default function Navbar() {
                                     <User className="w-4 h-4" />
                                 </div>
                             </Link>
-                            <button onClick={() => signOut()} className="text-sm hover:text-white">Logout</button>
+                            <button onClick={() => signOut({ callbackUrl: '/' })} className="text-sm hover:text-white">Logout</button>
                         </div>
                     ) : (
                         <Link href="/api/auth/signin">
@@ -110,7 +110,7 @@ export default function Navbar() {
                                 <User className="w-4 h-4" /> My Profile
                             </Link>
                             <button
-                                onClick={() => { signOut(); setIsOpen(false); }}
+                                onClick={() => { signOut({ callbackUrl: '/' }); setIsOpen(false); }}
                                 className="p-2 text-left hover:bg-red-500/10 text-red-300 rounded-lg transition-colors"
                             >
                                 Logout
