@@ -20,6 +20,14 @@ const UserSchema = new mongoose.Schema({
     bio: { type: String, default: 'No bio provided.' },
     phone: { type: String },
 
+    gender: { type: String, enum: ['male', 'female'] },
+    height: { type: Number }, // In cm
+    maritalStatus: { type: String, enum: ['single', 'divorced', 'widowed', 'awaiting_divorce'] },
+    education: { type: String },
+    sect: { type: String },
+    caste: { type: String }, // Optional
+    prayerFrequency: { type: String, enum: ['5x', 'sometimes', 'jummah_only', 'rarely'] },
+
     location: { type: String },
     age: { type: Number },
     occupation: { type: String },

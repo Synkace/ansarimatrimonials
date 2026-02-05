@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 
-const handler = NextAuth({
+export const authOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -56,6 +56,7 @@ const handler = NextAuth({
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
+                token.isVerified = user.isVerified;
             }
             return token;
         },
@@ -63,6 +64,7 @@ const handler = NextAuth({
             if (session.user) {
                 session.user.role = token.role;
                 session.user.id = token.id;
+                session.user.isVerified = token.isVerified;
             }
             return session;
         },
@@ -71,6 +73,8 @@ const handler = NextAuth({
         signIn: "/login",
     },
     secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

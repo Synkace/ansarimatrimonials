@@ -1,16 +1,23 @@
 import MihrabCard from "@/components/ui/MihrabCard";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { headers } from 'next/headers';
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export const dynamic = 'force-dynamic';
 
 export default async function Dashboard() {
     await dbConnect();
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
 
     if (!session) {
         redirect("/login");
+    }
+
+    // Force onboarding if not verified/completed
+    if (!session.user.isVerified) {
+        redirect("/onboarding");
     }
 
     // Fetch users meant for feed (exclude self handled in query if we had session here, simplified for now)
