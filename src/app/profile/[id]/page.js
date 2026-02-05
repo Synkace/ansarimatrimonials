@@ -21,7 +21,7 @@ export default async function ProfilePage({ params }) {
 
     let targetUser = null;
 
-    if (id.startsWith("mock")) {
+    if (id && id.startsWith("mock")) {
         const { MOCK_USERS } = await import("@/lib/mockData");
         targetUser = MOCK_USERS.find(u => u._id === id);
     } else {

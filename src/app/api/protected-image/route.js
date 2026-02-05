@@ -28,7 +28,7 @@ export async function GET(request) {
         const fullPath = path.resolve(filePath);
         const allowedDir = path.join(process.cwd(), "protected", "uploads");
 
-        if (!fullPath.startsWith(allowedDir)) {
+        if (fullPath && !fullPath.startsWith(allowedDir)) {
             // Allow it if it's just the filename passed and we join it
             // If filePath is just "aadhaar_123.jpg"
             if (!filePath.includes("/") && !filePath.includes("\\")) {
@@ -45,7 +45,7 @@ export async function GET(request) {
             }
 
             // If absolute path passed (as saved in my previous code):
-            if (fs.existsSync(fullPath) && fullPath.startsWith(allowedDir)) {
+            if (fs.existsSync(fullPath) && fullPath && fullPath.startsWith(allowedDir)) {
                 const fileBuffer = fs.readFileSync(fullPath);
                 return new NextResponse(fileBuffer, {
                     headers: {
