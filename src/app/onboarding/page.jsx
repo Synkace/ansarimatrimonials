@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Moon, Heart } from "lucide-react";
@@ -8,11 +8,10 @@ import { Moon, Heart } from "lucide-react";
 export default function OnboardingPage() {
     const { data: session } = useSession();
     const router = useRouter();
-    const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
-        name: session?.user?.name || "",
+        name: "",
         gender: "male",
         height: "",
         maritalStatus: "single",
@@ -25,6 +24,34 @@ export default function OnboardingPage() {
         occupation: "",
         age: ""
     });
+
+    useEffect(() => {
+        if (session?.user?.name) {
+            setFormData(prev => ({ ...prev, name: session.user.name }));
+        }
+
+        // Fetch existing profile data
+        const fetchProfile = async () => {
+            try {
+                const res = await fetch('/api/user/onboarding');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.user) {
+                        setFormData(prev => ({
+                            ...prev,
+                            ...data.user,
+                            // Handle potential nulls or defaults
+                            name: data.user.name || session?.user?.name || ""
+                        }));
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load profile:", error);
+            }
+        };
+        fetchProfile();
+
+    }, [session]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

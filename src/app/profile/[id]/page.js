@@ -37,6 +37,9 @@ export default async function ProfilePage({ params }) {
     // Strip Data
     const safeUser = stripSensitiveData(targetUser, session?.user);
 
+    // Ownership Check
+    const isOwner = session?.user?.id && targetUser._id.toString() === session.user.id;
+
     const isUnlocked = safeUser.phone !== undefined;
 
     return (
@@ -57,9 +60,16 @@ export default async function ProfilePage({ params }) {
 
                     {/* Middle: Details */}
                     <div className="col-span-2 space-y-6">
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-4xl font-serif text-gold">{safeUser.name}</h1>
-                            {safeUser.isVerified && <BadgeCheck className="w-8 h-8 text-blue-400" />}
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-4xl font-serif text-gold">{safeUser.name}</h1>
+                                {safeUser.isVerified && <BadgeCheck className="w-8 h-8 text-blue-400" />}
+                            </div>
+                            {isOwner && (
+                                <a href="/onboarding" className="px-4 py-2 bg-emerald-800/50 hover:bg-emerald-700/50 border border-gold/30 rounded-full text-gold text-sm transition-colors flex items-center gap-2">
+                                    Edit Profile
+                                </a>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 text-emerald-100/80">
