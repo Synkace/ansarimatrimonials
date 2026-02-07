@@ -47,6 +47,7 @@ export default async function ProfilePage({ params }) {
         <div className="container mx-auto px-4 py-8">
             {/* Header Profile Section */}
             <div className="relative bg-emerald-900/50 rounded-3xl p-8 border border-gold/20 backdrop-blur-sm overflow-hidden min-h-[400px]">
+                <h1 className="text-red-500 font-bold text-center mb-4">DEPLOYMENT_VERIFIED_FEB_7</h1>
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Left: Image (Mihrab Shape) */}
                     <div className="col-span-1 flex justify-center">
