@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Loader2, Check, Ban, Search, CheckCircle, XCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function UserTable() {
     const [users, setUsers] = useState([]);
@@ -156,6 +157,11 @@ export default function UserTable() {
                                                         {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Reactivate"}
                                                     </button>
                                                 )}
+                                                <Link href={`/admin/users/view/${user._id}`}>
+                                                    <button className="bg-emerald-700/80 hover:bg-emerald-600 text-white px-3 py-1.5 rounded text-xs transition-colors">
+                                                        View
+                                                    </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))
