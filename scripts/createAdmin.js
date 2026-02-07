@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
-
-// Define User Schema inline to avoid module issues during standalone script execution
+try {
+    require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
+} catch (e) {
+    console.log("dotenv not found, relying on process.env");
+}
 const UserSchema = new mongoose.Schema({
     name: String,
     email: { type: String, unique: true },
