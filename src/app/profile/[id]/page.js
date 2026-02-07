@@ -66,7 +66,7 @@ export default async function ProfilePage({ params }) {
                                 {safeUser.isVerified && <BadgeCheck className="w-8 h-8 text-blue-400" />}
                             </div>
                             {isOwner && (
-                                <a href="/onboarding" className="px-4 py-2 bg-emerald-800/50 hover:bg-emerald-700/50 border border-gold/30 rounded-full text-gold text-sm transition-colors flex items-center gap-2">
+                                <a href="/profile/edit" className="px-4 py-2 bg-emerald-800/50 hover:bg-emerald-700/50 border border-gold/30 rounded-full text-gold text-sm transition-colors flex items-center gap-2">
                                     Edit Profile
                                 </a>
                             )}

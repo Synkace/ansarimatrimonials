@@ -6,41 +6,47 @@ import User from "@/models/User";
 
 export async function PUT(req, { params }) {
     try {
+        const { id } = await params;
         const session = await getServerSession(authOptions);
+
         if (!session || session.user.role !== 'admin') {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { id } = params;
-        const body = await req.json();
+        const data = await req.json();
+        const { action } = data; // 'approve' or 'suspend'
 
         await dbConnect();
 
-        const updatedUser = await User.findByIdAndUpdate(id, body, { new: true }).select("-password");
+        let updateData = {};
 
-        if (!updatedUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-        return NextResponse.json({ success: true, user: updatedUser });
-
-    } catch (error) {
-        return NextResponse.json({ error: "Internal Error" }, { status: 500 });
-    }
-}
-
-export async function DELETE(req, { params }) {
-    try {
-        const session = await getServerSession(authOptions);
-        if (!session || session.user.role !== 'admin') {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (action === 'approve') {
+            updateData = {
+                isVerified: true,
+                verificationStatus: 'verified'
+            };
+        } else if (action === 'suspend') {
+            updateData = {
+                accountStatus: 'suspended'
+            };
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
         }
 
-        const { id } = params;
-        await dbConnect();
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+        ).select("-password -aadhaarNumber -aadhaarImage");
 
-        await User.findByIdAndDelete(id);
+        if (!updatedUser) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ user: updatedUser });
+
     } catch (error) {
-        return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+        console.error("Admin User Update Error:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
