@@ -137,7 +137,7 @@ export default function UserTable() {
                                                         {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Approve"}
                                                     </button>
                                                 )}
-                                                {user.accountStatus !== 'suspended' && (
+                                                {user.accountStatus !== 'suspended' ? (
                                                     <button
                                                         onClick={() => handleAction(user._id, 'suspend')}
                                                         disabled={actionLoading === user._id}
@@ -145,6 +145,15 @@ export default function UserTable() {
                                                         title="Suspend User"
                                                     >
                                                         {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Suspend"}
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleAction(user._id, 'reactivate')}
+                                                        disabled={actionLoading === user._id}
+                                                        className="bg-blue-600/80 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs disabled:opacity-50 transition-colors"
+                                                        title="Reactivate User"
+                                                    >
+                                                        {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Reactivate"}
                                                     </button>
                                                 )}
                                             </td>

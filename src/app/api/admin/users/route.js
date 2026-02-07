@@ -27,7 +27,14 @@ export async function GET(req) {
             ];
         }
         if (role) query.role = role;
-        if (status) query.verificationStatus = status;
+        if (role) query.role = role;
+
+        if (status === 'pending') {
+            query.isProfileComplete = true;
+            query.isVerified = false;
+        } else if (status) {
+            query.verificationStatus = status;
+        }
 
         // Photo Status Filter
         const photoStatus = searchParams.get('photoStatus');

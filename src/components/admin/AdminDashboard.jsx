@@ -8,7 +8,21 @@ import PhotoModeration from "@/components/admin/PhotoModeration";
 import SiteControls from "@/components/admin/SiteControls";
 
 export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState("verification");
+    const [stats, setStats] = useState({ pending: 0, total: 0 });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                // We'll trust the UserTable API to return a count or we can just fetch pending users length for now
+                const res = await fetch('/api/admin/users?status=pending');
+                const data = await res.json();
+                if (data.users) {
+                    setStats(prev => ({ ...prev, pending: data.users.length }));
+                }
+            } catch (e) { console.error("Stats error", e); }
+        };
+        fetchStats();
+    }, []);
 
     // CMS State (Mock fetching for now, can implement Real fetch in Effect)
     const [cmsData, setCmsData] = useState([]);
@@ -109,7 +123,11 @@ export default function AdminDashboard() {
                 <h1 className="text-xl font-bold text-gold mb-6 px-4">Admin CMS</h1>
                 {[
                     { id: 'user', label: 'Users', icon: UserPlus },
-                    { id: 'verification', label: 'Verifications', icon: CheckCircle },
+                    {
+                        id: 'verification',
+                        label: `Pending Approvals (${stats.pending})`,
+                        icon: CheckCircle
+                    },
                     { id: 'photos', label: 'Photos', icon: Image },
                     { id: 'site', label: 'Site Controls', icon: FileText },
                     { id: 'agent', label: 'Agents', icon: UserPlus },

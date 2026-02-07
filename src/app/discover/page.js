@@ -47,7 +47,21 @@ export default async function DiscoverPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {displayUsers.map(user => (
-                    <MihrabCard key={user._id} user={user} isUnlocked={false} />
+                    <div key={user._id} className="relative">
+                        <MihrabCard user={user} isUnlocked={false} />
+                        {user.isVerified ? (
+                            <div className="absolute top-4 right-4 bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-lg z-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                Verified
+                            </div>
+                        ) : (
+                            <div className="absolute top-4 right-4 bg-blue-500 text-white text-xs px-2 py-1 rounded-full shadow-lg z-10">
+                                New Member
+                            </div>
+                        )}
+                    </div>
                 ))}
             </div>
         </div>
