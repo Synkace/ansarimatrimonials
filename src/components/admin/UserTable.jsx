@@ -95,60 +95,63 @@ export default function UserTable() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {users.length === 0 ? (
-                                <tr>
-                                    <td colSpan="5" className="p-8 text-center text-emerald-100/50">No users found.</td>
-                                </tr>
-                            ) : (
-                                users.map(user => (
-                                    <tr key={user._id} className="hover:bg-white/5 transition-colors">
-                                        <td className="p-4">
-                                            <div className="font-medium text-white">{user.name}</div>
-                                            <div className="text-xs opacity-60 font-mono">{user.email || user.phone || "No contact"}</div>
-                                        </td>
-                                        <td className="p-4">
-                                            <span className={`px-2 py-0.5 rounded text-xs border ${user.role === 'admin' ? 'border-purple-500 text-purple-300' : 'border-blue-500 text-blue-300'}`}>
-                                                {user.role}
-                                            </span>
-                                        </td>
-                                        <td className="p-4">
-                                            <span className={`px-2 py-0.5 rounded text-xs flex w-fit items-center gap-1 ${user.accountStatus === 'suspended' ? 'bg-red-900/50 text-red-300' : 'bg-green-900/50 text-green-300'}`}>
-                                                {user.accountStatus === 'suspended' && <Ban className="w-3 h-3" />}
-                                                {user.accountStatus}
-                                            </span>
-                                        </td>
-                                        <td className="p-4">
-                                            {user.isVerified ? (
-                                                <span className="text-green-400 flex items-center gap-1 text-sm"><CheckCircle className="w-4 h-4" /> Verified</span>
-                                            ) : (
-                                                <span className="text-yellow-500 flex items-center gap-1 text-sm"><Loader2 className="w-3 h-3" /> Pending</span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 text-right space-x-2">
-                                            {!user.isVerified && (
-                                                <button
-                                                    onClick={() => handleAction(user._id, 'approve')}
-                                                    disabled={actionLoading === user._id}
-                                                    className="bg-green-600/80 hover:bg-green-500 text-white px-3 py-1.5 rounded text-xs disabled:opacity-50 transition-colors"
-                                                    title="Approve User"
-                                                >
-                                                    {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Approve"}
-                                                </button>
-                                            )}
-                                            {user.accountStatus !== 'suspended' && (
-                                                <button
-                                                    onClick={() => handleAction(user._id, 'suspend')}
-                                                    disabled={actionLoading === user._id}
-                                                    className="bg-red-600/80 hover:bg-red-500 text-white px-3 py-1.5 rounded text-xs disabled:opacity-50 transition-colors"
-                                                    title="Suspend User"
-                                                >
-                                                    {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Suspend"}
-                                                </button>
-                                            )}
-                                        </td>
+                            {(() => {
+                                console.log("Admin Data:", users);
+                                return users.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="p-8 text-center text-emerald-100/50">No users found.</td>
                                     </tr>
-                                ))
-                            )}
+                                ) : (
+                                    users.map(user => (
+                                        <tr key={user._id} className="hover:bg-white/5 transition-colors">
+                                            <td className="p-4">
+                                                <div className="font-medium text-white">{user.name}</div>
+                                                <div className="text-xs opacity-60 font-mono">{user.email || user.phone || "No contact"}</div>
+                                            </td>
+                                            <td className="p-4">
+                                                <span className={`px-2 py-0.5 rounded text-xs border ${user.role === 'admin' ? 'border-purple-500 text-purple-300' : 'border-blue-500 text-blue-300'}`}>
+                                                    {user.role}
+                                                </span>
+                                            </td>
+                                            <td className="p-4">
+                                                <span className={`px-2 py-0.5 rounded text-xs flex w-fit items-center gap-1 ${user.accountStatus === 'suspended' ? 'bg-red-900/50 text-red-300' : 'bg-green-900/50 text-green-300'}`}>
+                                                    {user.accountStatus === 'suspended' && <Ban className="w-3 h-3" />}
+                                                    {user.accountStatus}
+                                                </span>
+                                            </td>
+                                            <td className="p-4">
+                                                {user.isVerified ? (
+                                                    <span className="text-green-400 flex items-center gap-1 text-sm"><CheckCircle className="w-4 h-4" /> Verified</span>
+                                                ) : (
+                                                    <span className="text-yellow-500 flex items-center gap-1 text-sm"><Loader2 className="w-3 h-3" /> Pending</span>
+                                                )}
+                                            </td>
+                                            <td className="p-4 text-right space-x-2">
+                                                {!user.isVerified && (
+                                                    <button
+                                                        onClick={() => handleAction(user._id, 'approve')}
+                                                        disabled={actionLoading === user._id}
+                                                        className="bg-green-600/80 hover:bg-green-500 text-white px-3 py-1.5 rounded text-xs disabled:opacity-50 transition-colors"
+                                                        title="Approve User"
+                                                    >
+                                                        {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Approve"}
+                                                    </button>
+                                                )}
+                                                {user.accountStatus !== 'suspended' && (
+                                                    <button
+                                                        onClick={() => handleAction(user._id, 'suspend')}
+                                                        disabled={actionLoading === user._id}
+                                                        className="bg-red-600/80 hover:bg-red-500 text-white px-3 py-1.5 rounded text-xs disabled:opacity-50 transition-colors"
+                                                        title="Suspend User"
+                                                    >
+                                                        {actionLoading === user._id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Suspend"}
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                );
+                            })()}
                         </tbody>
                     </table>
                 </div>

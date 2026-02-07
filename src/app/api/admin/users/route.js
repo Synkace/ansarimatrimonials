@@ -37,7 +37,7 @@ export async function GET(req) {
             query.isImageVerified = false;
         }
 
-        const users = await User.find(query).select("-password").sort({ createdAt: -1 });
+        const users = await User.find(query).select("-password").sort({ createdAt: -1 }).lean();
 
         return NextResponse.json({ users });
 
