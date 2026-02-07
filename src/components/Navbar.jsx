@@ -6,9 +6,14 @@ import Link from "next/link";
 import { Moon, User, Shield, Menu, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
+import { usePathname } from "next/navigation";
+
 export default function Navbar() {
     const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
+    const pathname = usePathname();
+
+    if (pathname?.startsWith("/admin")) return null;
 
     return (
         <nav className="sticky top-0 z-50 w-full bg-emerald-950/90 backdrop-blur-sm border-b border-gold/20 text-gold shadow-lg">

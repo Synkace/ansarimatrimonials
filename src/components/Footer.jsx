@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { Moon, Heart, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
+import { usePathname } from "next/navigation";
+
 export default function Footer() {
+    const pathname = usePathname();
+    if (pathname?.startsWith("/admin")) return null;
+
     return (
         <footer className="bg-emerald-950 border-t border-gold/20 text-emerald-100/70 pt-16 pb-8">
             <div className="container mx-auto px-4">
