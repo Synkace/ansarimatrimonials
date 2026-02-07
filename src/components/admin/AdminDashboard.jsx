@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Trash2, FileText, HelpCircle, MessageCircle, UserPlus, CheckCircle, Image } from "lucide-react";
 import UserTable from "@/components/admin/UserTable";
 import VerificationQueue from "@/components/admin/VerificationQueue";
