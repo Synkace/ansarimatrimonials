@@ -66,47 +66,24 @@ export const authOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user, trigger, session }) {
-            // Initial sign in
+        async jwt({ token, user }) {
             if (user) {
+                token.id = user.id || user._id;
                 token.role = user.role;
-                token.id = user.id;
                 token.isVerified = user.isVerified;
                 token.isProfileComplete = user.isProfileComplete;
             }
-
-            // Simple trigger update if client sends it
-            if (trigger === "update" && session) {
-                return { ...token, ...session.user };
-            }
-
-            // On subsequent calls, fetch fresh data from DB
-            // This ensures isProfileComplete and isVerified are always up to date
-            if (!user && token.id) {
-                try {
-                    await dbConnect();
-                    const freshUser = await User.findById(token.id).select("role isVerified isProfileComplete");
-                    if (freshUser) {
-                        token.role = freshUser.role;
-                        token.isVerified = freshUser.isVerified;
-                        token.isProfileComplete = freshUser.isProfileComplete;
-                    }
-                } catch (error) {
-                    console.error("Error refreshing token:", error);
-                }
-            }
-
             return token;
         },
         async session({ session, token }) {
-            if (session.user) {
-                session.user.role = token.role;
+            if (token && session.user) {
                 session.user.id = token.id;
+                session.user.role = token.role;
                 session.user.isVerified = token.isVerified;
                 session.user.isProfileComplete = token.isProfileComplete;
             }
             return session;
-        },
+        }
     },
     pages: {
         signIn: "/login",
