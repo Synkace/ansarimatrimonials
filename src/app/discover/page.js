@@ -10,7 +10,8 @@ export default async function DiscoverPage() {
     await dbConnect();
 
     // Try to fetch real users first
-    const realUsers = await User.find({ role: 'user', isVerified: true }).limit(20).lean();
+    // Try to fetch real users first
+    const realUsers = await User.find({ role: 'user', isProfileComplete: true }).limit(20).lean();
 
     // If no real users, use mock data
     let displayUsers = [];

@@ -12,6 +12,7 @@ export default function OnboardingPage() {
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
+        name: session?.user?.name || "",
         gender: "male",
         height: "",
         maritalStatus: "single",
@@ -41,7 +42,11 @@ export default function OnboardingPage() {
             });
 
             if (res.ok) {
+                // Force session update on client
+                // In a real app we might use update() from useSession
+                // For now, redirecting helps, and our JWT callback logic handles the rest on next load
                 router.push("/dashboard");
+                router.refresh();
             } else {
                 alert("Something went wrong. Please try again.");
             }
@@ -68,6 +73,11 @@ export default function OnboardingPage() {
                         <h3 className="text-xl text-white font-bold border-b border-gold/20 pb-2">Basic Information</h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2">
+                                <label className="block text-sm text-gold mb-1">Full Name</label>
+                                <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your Name" required className="w-full bg-emerald-950 border border-gold/30 rounded-lg p-3 text-white focus:border-gold outline-none" />
+                            </div>
+
                             <div>
                                 <label className="block text-sm text-gold mb-1">I am a</label>
                                 <select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-emerald-950 border border-gold/30 rounded-lg p-3 text-white focus:border-gold outline-none">
@@ -143,7 +153,7 @@ export default function OnboardingPage() {
                         {loading ? "Saving..." : <><Heart className="w-5 h-5 fill-emerald-950" /> Complete Profile</>}
                     </button>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

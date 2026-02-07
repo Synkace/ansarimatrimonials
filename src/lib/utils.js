@@ -18,13 +18,16 @@ export function stripSensitiveData(user, requestingUser) {
 
     // 3. Unlocked profile gets everything
     // Check if requestingUser has u._id in unlockedProfiles
+    // 3. Unlocked profile gets everything
+    // Check if requestingUser has u._id in unlockedProfiles
     // unlockedProfiles might be array of IDs or Objects
-    const isUnlocked = requestingUser?.unlockedProfiles?.some(
-        (id) => id.toString() === u._id.toString()
-    );
-
-    if (isUnlocked) {
-        return u;
+    if (requestingUser?.unlockedProfiles && Array.isArray(requestingUser.unlockedProfiles)) {
+        const isUnlocked = requestingUser.unlockedProfiles.some(
+            (id) => id && id.toString() === u._id.toString()
+        );
+        if (isUnlocked) {
+            return u;
+        }
     }
 
     // 4. Default: Strip sensitive
