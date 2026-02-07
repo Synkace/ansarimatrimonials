@@ -38,6 +38,7 @@ export default async function ProfilePage({ params }) {
     const safeUser = stripSensitiveData(targetUser, session?.user);
 
     // Ownership Check
+    console.log("DEBUG:", { sessionID: session?.user?.id, profileID: id });
     const isOwner = session?.user?.id && targetUser._id.toString() === session.user.id;
 
     const isUnlocked = safeUser.phone !== undefined;

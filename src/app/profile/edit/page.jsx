@@ -66,8 +66,8 @@ export default function EditProfilePage() {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await fetch('/api/user/onboarding', {
-                method: 'POST',
+            const res = await fetch('/api/user/update', {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
