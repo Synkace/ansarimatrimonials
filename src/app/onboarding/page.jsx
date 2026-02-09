@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Moon, Heart } from "lucide-react";
 
 export default function OnboardingPage() {
-    const { data: session } = useSession();
+    const { data: session, status, update } = useSession();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -24,6 +24,12 @@ export default function OnboardingPage() {
         occupation: "",
         age: ""
     });
+
+    useEffect(() => {
+        if (session?.user?.isProfileComplete) {
+            router.push('/dashboard');
+        }
+    }, [session, router]);
 
     useEffect(() => {
         if (session?.user?.name) {
@@ -49,7 +55,7 @@ export default function OnboardingPage() {
                 console.error("Failed to load profile:", error);
             }
         };
-        fetchProfile();
+        if (session) fetchProfile();
 
     }, [session]);
 
@@ -69,11 +75,10 @@ export default function OnboardingPage() {
             });
 
             if (res.ok) {
-                // Force session update on client
-                // In a real app we might use update() from useSession
-                // For now, redirecting helps, and our JWT callback logic handles the rest on next load
+                // Force session update so the JWT is refreshed with isProfileComplete: true
+                await update({ isProfileComplete: true });
+                router.refresh(); // Refresh server components
                 router.push("/dashboard");
-                router.refresh();
             } else {
                 alert("Something went wrong. Please try again.");
             }

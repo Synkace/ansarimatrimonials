@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
+    username: { type: String, unique: true, sparse: true },
     name: { type: String, required: true },
-    email: { type: String, unique: true }, // Optional if using mobile OTP only, but user asked for NextAuth
+    email: { type: String, unique: true, sparse: true },
     password: { type: String, select: false },
     image: { type: String },
     role: { type: String, default: 'user', enum: ['user', 'admin', 'agent'] },
@@ -22,7 +23,7 @@ const UserSchema = new mongoose.Schema({
 
     moonPhase: { type: Number, default: 0 },
     bio: { type: String, default: 'No bio provided.' },
-    phone: { type: String },
+    phone: { type: String, unique: true, sparse: true },
 
     gender: { type: String, enum: ['male', 'female'] },
     height: { type: Number }, // In cm
