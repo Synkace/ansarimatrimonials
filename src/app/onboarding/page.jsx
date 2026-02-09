@@ -25,11 +25,12 @@ export default function OnboardingPage() {
         age: ""
     });
 
+    // Redirect if profile is already complete
     useEffect(() => {
-        if (session?.user?.isProfileComplete) {
+        if (status === "authenticated" && session?.user?.isProfileComplete) {
             router.push('/dashboard');
         }
-    }, [session, router]);
+    }, [session, status, router]);
 
     useEffect(() => {
         if (session?.user?.name) {
@@ -89,6 +90,24 @@ export default function OnboardingPage() {
             setLoading(false);
         }
     };
+
+    // Show loading state while authenticating
+    if (status === "loading") {
+        return (
+            <div className="min-h-screen bg-emerald-950 flex items-center justify-center p-4">
+                <div className="text-center">
+                    <Moon className="w-12 h-12 text-gold mx-auto mb-4 animate-pulse" />
+                    <p className="text-emerald-200">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Redirect to login if not authenticated
+    if (status === "unauthenticated") {
+        router.push('/login');
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-emerald-950 flex items-center justify-center p-4">

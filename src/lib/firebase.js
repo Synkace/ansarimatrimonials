@@ -2,13 +2,13 @@ import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDda5oTHKom1Jk1Kx8GuNCxU5dJKF0IbE0",
-    authDomain: "ansari-matrimony.firebaseapp.com",
-    projectId: "ansari-matrimony",
-    storageBucket: "ansari-matrimony.firebasestorage.app",
-    messagingSenderId: "781772137282",
-    appId: "1:781772137282:web:de4010c2736467071f1edb",
-    measurementId: "G-Y68JHPX57C"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

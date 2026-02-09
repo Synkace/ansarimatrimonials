@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 
@@ -15,7 +15,7 @@ export async function PUT(req) {
         await dbConnect();
 
         // Prevent updating sensitive fields or role through this endpoint
-        const { role, isVerified, verificationStatus, accountStatus, _id, email, ...updateData } = data;
+        const { role, isVerified, verificationStatus, accountStatus, _id, email, password, ...updateData } = data;
 
         const updatedUser = await User.findByIdAndUpdate(
             session.user.id,

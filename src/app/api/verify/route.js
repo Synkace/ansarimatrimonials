@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { writeFile } from "fs/promises";
 import path from "path";
 import fs from "fs";
@@ -8,12 +9,11 @@ import User from "@/models/User";
 
 export async function POST(request) {
     try {
-        const session = await getServerSession(); // Note: Pass authOptions if separated, or import headers
-        // For simplicity, we assume session is available or check headers, 
-        // but in App Router route handlers, getServerSession requires authOptions usually.
-        // We will skip strict session check for this demo or mock it, 
-        // but correctly we should import authOptions. 
-        // See note below.
+        const session = await getServerSession(authOptions);
+
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
         // Parse FormData
         const formData = await request.formData();

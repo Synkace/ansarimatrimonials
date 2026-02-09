@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 
@@ -26,7 +26,6 @@ export async function GET(req) {
                 { phone: { $regex: search, $options: 'i' } }
             ];
         }
-        if (role) query.role = role;
         if (role) query.role = role;
 
         if (status === 'pending') {

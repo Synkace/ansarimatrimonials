@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Moon, Smartphone, Mail, Lock, User, Hash } from "lucide-react";
@@ -23,17 +23,26 @@ export default function SignupPage() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const recaptchaVerifierRef = useRef(null);
 
-    // Initialize Recaptcha
+    // Initialize Recaptcha once
     useEffect(() => {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'signup-recaptcha-container', {
+        if (!recaptchaVerifierRef.current) {
+            recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'signup-recaptcha-container', {
                 'size': 'invisible',
                 'callback': (response) => {
                     // reCAPTCHA solved
                 }
             });
         }
+
+        // Cleanup on unmount
+        return () => {
+            if (recaptchaVerifierRef.current) {
+                recaptchaVerifierRef.current.clear();
+                recaptchaVerifierRef.current = null;
+            }
+        };
     }, []);
 
     const handleSignup = async (e) => {
@@ -51,17 +60,51 @@ export default function SignupPage() {
         const formattedPhone = phone.startsWith("+") ? phone : `+91${phone}`;
 
         try {
-            const appVerifier = window.recaptchaVerifier;
+            // Check if phone already exists
+            const checkResponse = await fetch('/api/auth/check-phone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: formattedPhone })
+            });
+
+            if (checkResponse.ok) {
+                const { exists } = await checkResponse.json();
+                if (exists) {
+                    setError("This phone number is already registered. Please login instead.");
+                    setLoading(false);
+                    return;
+                }
+            }
+
+            const appVerifier = recaptchaVerifierRef.current;
             const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
             setConfirmationResult(confirmation);
             setIsOtpSent(true);
         } catch (err) {
             console.error(err);
-            setError(err.message || "Failed to send OTP");
-            if (window.recaptchaVerifier) {
-                window.recaptchaVerifier.render().then(widgetId => {
-                    window.recaptchaVerifier.reset(widgetId);
-                });
+
+            // Provide specific error messages
+            if (err.code === 'auth/invalid-phone-number') {
+                setError("Invalid phone number format. Please check and try again.");
+            } else if (err.code === 'auth/too-many-requests') {
+                setError("Too many attempts. Please try again later.");
+            } else if (err.code === 'auth/quota-exceeded') {
+                setError("SMS quota exceeded. Please contact support or try again later.");
+            } else {
+                setError(err.message || "Failed to send OTP. Please try again.");
+            }
+
+            // Reset recaptcha on error
+            if (recaptchaVerifierRef.current) {
+                try {
+                    recaptchaVerifierRef.current.clear();
+                    recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'signup-recaptcha-container', {
+                        'size': 'invisible',
+                        'callback': (response) => { }
+                    });
+                } catch (resetErr) {
+                    console.error("Recaptcha reset error:", resetErr);
+                }
             }
         } finally {
             setLoading(false);
@@ -86,17 +129,26 @@ export default function SignupPage() {
                 isOtp: true,
                 ...formData
             });
-            console.log("DEBUG_SIGNIN_RES:", res);
 
             if (res?.error) {
-                alert("Auth Error: " + res.error);
+                setError("Registration failed: " + res.error);
             } else {
-                // Force it manually to onboarding - existing logic will redirect to dashboard if profile is complete
+                // Force redirect manually to onboarding
                 window.location.href = '/onboarding';
             }
         } catch (err) {
             console.error(err);
-            setError("Invalid OTP or Registration Failed");
+
+            // Provide specific error messages
+            if (err.code === 'auth/invalid-verification-code') {
+                setError("Invalid OTP. Please check and try again.");
+            } else if (err.code === 'auth/code-expired') {
+                setError("OTP has expired. Please request a new one.");
+            } else if (err.message?.includes("User with this Email or Username already exists")) {
+                setError("Email or username already taken. Please use different credentials.");
+            } else {
+                setError("Verification failed. Please try again.");
+            }
         } finally {
             setLoading(false);
         }
@@ -212,17 +264,23 @@ export default function SignupPage() {
                             disabled={loading}
                             className="w-full bg-gold py-2 px-4 rounded-md text-emerald-950 font-bold hover:bg-white transition-colors disabled:opacity-50"
                         >
-                            {loading ? "Regsatering..." : "Verify & Register"}
+                            {loading ? "Registering..." : "Verify & Register"}
                         </button>
                         <button
                             type="button"
                             onClick={() => {
                                 setIsOtpSent(false);
                                 setOtp("");
-                                if (window.recaptchaVerifier) {
-                                    window.recaptchaVerifier.render().then(widgetId => {
-                                        window.recaptchaVerifier.reset(widgetId);
-                                    });
+                                if (recaptchaVerifierRef.current) {
+                                    try {
+                                        recaptchaVerifierRef.current.clear();
+                                        recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'signup-recaptcha-container', {
+                                            'size': 'invisible',
+                                            'callback': (response) => { }
+                                        });
+                                    } catch (err) {
+                                        console.error("Recaptcha reset error:", err);
+                                    }
                                 }
                             }}
                             className="w-full text-emerald-400 text-sm hover:text-white"
