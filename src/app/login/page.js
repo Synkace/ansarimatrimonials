@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Moon, Smartphone, Mail, Lock } from "lucide-react";
@@ -25,6 +25,7 @@ function LoginForm() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [confirmationResult, setConfirmationResult] = useState(null);
+    const recaptchaVerifierRef = useRef(null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -37,10 +38,10 @@ function LoginForm() {
         }
     }, [searchParams]);
 
-    // Initialize Recaptcha
+    // Initialize Recaptcha once using useRef (prevents duplicates)
     useEffect(() => {
-        if (!window.recaptchaVerifier) {
-            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        if (!recaptchaVerifierRef.current) {
+            recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
                 'size': 'invisible',
                 'callback': (response) => {
                     // reCAPTCHA solved, allow signInWithPhoneNumber.
@@ -50,6 +51,14 @@ function LoginForm() {
                 }
             });
         }
+
+        // Cleanup on unmount
+        return () => {
+            if (recaptchaVerifierRef.current) {
+                recaptchaVerifierRef.current.clear();
+                recaptchaVerifierRef.current = null;
+            }
+        };
     }, []);
 
     const isPhone = (input) => /^\+?[0-9\s-]{10,}$/.test(input);
@@ -68,17 +77,24 @@ function LoginForm() {
         const formattedPhone = identifier.startsWith("+") ? identifier : `+91${identifier}`; // Default to +91 if checking simple match
 
         try {
-            const appVerifier = window.recaptchaVerifier;
+            const appVerifier = recaptchaVerifierRef.current;
             const confirmation = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
             setConfirmationResult(confirmation);
             setIsOtpSent(true);
         } catch (err) {
             console.error(err);
             setError(err.message || "Failed to send OTP");
-            if (window.recaptchaVerifier) {
-                window.recaptchaVerifier.render().then(widgetId => {
-                    window.recaptchaVerifier.reset(widgetId);
-                });
+            // Reset recaptcha on error
+            if (recaptchaVerifierRef.current) {
+                try {
+                    recaptchaVerifierRef.current.clear();
+                    recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                        'size': 'invisible',
+                        'callback': (response) => { }
+                    });
+                } catch (resetErr) {
+                    console.error("Recaptcha reset error:", resetErr);
+                }
             }
         } finally {
             setLoading(false);
@@ -247,10 +263,16 @@ function LoginForm() {
                             onClick={() => {
                                 setIsOtpSent(false);
                                 setOtp("");
-                                if (window.recaptchaVerifier) {
-                                    window.recaptchaVerifier.render().then(widgetId => {
-                                        window.recaptchaVerifier.reset(widgetId);
-                                    });
+                                if (recaptchaVerifierRef.current) {
+                                    try {
+                                        recaptchaVerifierRef.current.clear();
+                                        recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                                            'size': 'invisible',
+                                            'callback': (response) => { }
+                                        });
+                                    } catch (err) {
+                                        console.error("Recaptcha reset error:", err);
+                                    }
                                 }
                             }}
                             className="w-full text-emerald-400 text-sm hover:text-white"

@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, initializeRecaptchaConfig } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,4 +15,15 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
-export { auth };
+// Force Firebase to use standard reCAPTCHA v3 (NOT Enterprise)
+// This prevents the "reCAPTCHA Enterprise site key not found" error
+initializeRecaptchaConfig(auth)
+    .then(() => {
+        // reCAPTCHA config initialized successfully
+    })
+    .catch((error) => {
+        // If Enterprise is not configured, Firebase will fall back to v3 automatically
+        console.warn("reCAPTCHA config initialization:", error.message);
+    });
+
+export { app, auth };
