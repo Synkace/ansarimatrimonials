@@ -8,7 +8,7 @@ set -e  # Exit on any error
 echo "🚀 Starting deployment..."
 
 # Navigate to project directory
-cd /root/ansarimatrimonials || { echo "❌ Project directory not found"; exit 1; }
+cd /var/www/ansari-matrimonials || { echo "❌ Project directory not found"; exit 1; }
 
 # Stop PM2 process
 echo "⏸️  Stopping PM2 process..."
